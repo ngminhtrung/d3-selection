@@ -1,24 +1,25 @@
 # d3-selection
 
+d3-selection thực chất chính là các methods liên quan đến DOM selector, như `document.querySelector`, `document.getElementById`, `document.getElementByName`, v.v. nhưng mạnh hơn, linh hoạt hơn, nhất là cho phép *set* (thiết lập) thông số của `attributes`, `styles`, `properties`, `HTML` hoặc nội dung của `text`. Sử dụng những method trong d3-selection như `enter` và `exit` đối với *data join* sẽ giúp *thêm* hoặc *xóa* phần tử khỏi dữ liệu gắn với nó. 
+
 Selections allow powerful data-driven transformation of the document object model (DOM): set [attributes](#selection_attr), [styles](#selection_style), [properties](#selection_property), [HTML](#selection_html) or [text](#selection_text) content, and more. Using the [data join](#joining-data)’s [enter](#selection_enter) and [exit](#selection_enter) selections, you can also [add](#selection_append) or [remove](#selection_remove) elements to correspond to data.
 
-Selection methods typically return the current selection, or a new selection, allowing the concise application of multiple operations on a given selection via method chaining. For example, to set the class and color style of all paragraph elements in the current document:
+Các methods trong d3-selection thường trả về chính phần tử đang được chọn, hoặc một phần tử mới, cho phép thực hiện các phép toán liên tiếp nhau dạng chuỗi trên phần tử kia. Ví dụ, để thiết lập tên *class* và *màu sắc* cho tất cả các phần tử `p` (paragraph) trong document hiện tại, ta có thể dùng 1 trong 2 cách (tương đương nhau) sau:
 
+Cách 1: 
 ```js
 d3.selectAll("p")
     .attr("class", "graf")
     .style("color", "red");
 ```
-
-This is equivalent to:
-
+Cách 2:
 ```js
 var p = d3.selectAll("p");
 p.attr("class", "graf");
 p.style("color", "red");
 ```
 
-By convention, selection methods that return the current selection use *four* spaces of indent, while methods that return a new selection use only *two*. This helps reveal changes of context by making them stick out of the chain:
+Theo quy ước, những method *selection* mà trả về "phần tử được chọn hiện thời" sẽ được lùi vào *bốn* khoảng trắng, trong khi methods mà trả về 1 "phần tử mới" sẽ được lùi vào chỉ *hai* khoảng trắng. Việc lùi khoảng trắng ít nhiều khiến cho cho chuỗi code bị lệch ra hoặc lệch vào, điều này giúp nhận ra logic của lập trình viên:
 
 ```js
 d3.select("body")
@@ -32,7 +33,7 @@ d3.select("body")
     .attr("height", 460);
 ```
 
-Selections are immutable. All selection methods that affect which elements are selected (or their order) return a new selection rather than modifying the current selection. However, note that elements are necessarily mutable, as selections drive transformations of the document!
+Selections là immutable. All selection methods that affect which elements are selected (or their order) return a new selection rather than modifying the current selection. However, note that elements are necessarily mutable, as selections drive transformations of the document!
 
 ## Installing
 
@@ -61,11 +62,11 @@ var div = d3.selectAll("div");
 
 ### Selecting Elements
 
-Selection methods accept [W3C selector strings](http://www.w3.org/TR/selectors-api/) such as `.fancy` to select elements with the class *fancy*, or `div` to select DIV elements. Selection methods come in two forms: select and selectAll: the former selects only the first matching element, while the latter selects all matching elements in document order. The top-level selection methods, [d3.select](#select) and [d3.selectAll](#selectAll), query the entire document; the subselection methods, [*selection*.select](#selection_select) and [*selection*.selectAll](#selection_selectAll), restrict selection to descendants of the selected elements.
+Selection methods accept [W3C selector strings](http://www.w3.org/TR/selectors-api/) such as `.fancy` to select elements with the class *fancy*, or `div` to select DIV elements. Các methods *selection* có 2 dạng: select và selectAll: dạng thứ nhất chỉ trả về kết quả đầu tiên tìm thấy, trong khi dạng thứ hai sẽ trả về mọi kết quả phù hợp. Cú pháp [d3.select](#select) và [d3.selectAll](#selectAll) sẽ giúp lục tìm và truy vấn toàn bộ document; trong khi các cú pháp dạng [*A*.select](#selection_select) và [*A*.selectAll](#selection_selectAll) sẽ chỉ giới hạn tìm kiếm bên trong phần tử "*A*" mà thôi.
 
 <a name="selection" href="#selection">#</a> d3.<b>selection</b>() [<>](https://github.com/d3/d3-selection/blob/master/src/selection/index.js#L38 "Source")
 
-[Selects](#select) the root element, `document.documentElement`. This function can also be used to test for selections (`instanceof d3.selection`) or to extend the selection prototype. For example, to add a method to check checkboxes:
+Cú pháp này để giúp [selects](#select) ông trùm `document.documentElement`. Hàm này cũng được dùng để kiểm tra selections (kiểu như `instanceof d3.selection`), hoặc để mở rộng *selection prototype*. Ví dụ như khi ta cần thêm 1 method để đặt thuộc tính "checked" của ô checkboxes thành `true` hoặc `false`:
 
 ```js
 d3.selection.prototype.checked = function(value) {
@@ -75,7 +76,7 @@ d3.selection.prototype.checked = function(value) {
 };
 ```
 
-And then to use:
+Sau đó dùng thôi: 
 
 ```js
 d3.selectAll("input[type=checkbox]").checked(true);
@@ -83,13 +84,16 @@ d3.selectAll("input[type=checkbox]").checked(true);
 
 <a name="select" href="#select">#</a> d3.<b>select</b>(<i>selector</i>) [<>](https://github.com/d3/d3-selection/blob/master/src/select.js#L3 "Source")
 
-Selects the first element that matches the specified *selector* string. If no elements match the *selector*, returns an empty selection. If multiple elements match the *selector*, only the first matching element (in document order) will be selected. For example, to select the first anchor element:
+Method này sẽ giúp select phần tử đầu tiên thỏa mãn điều kiện tìm kiếm (*selector*). 
+- Nếu không có phần tử nào thỏa mãn, kết quả trả về là rỗng.
+- Nếu có nhiều phẩn tử thõa mãn, chỉ có phẩn từ đầu tiên trong danh sách mới được trả về. 
+
+Ví dụ, để tìm các phần tử có thẻ `<a>` trong `document`:
 
 ```js
 var anchor = d3.select("a");
 ```
-
-If the *selector* is not a string, instead selects the specified node; this is useful if you already have a reference to a node, such as `this` within an event listener or a global such as `document.body`. For example, to make a clicked paragraph red:
+Nếu điều kiện tìm kiếm (*selector*) không phải là một chuỗi, thì người dùng có thể truyền vào một tham chiếu đến *node* như là `this` đặt bên trong một event listener, hoặc là một biến global như `document.body`. Ví dụ, để tạo hiệu ứng click vào 1 đoạn bất kỳ, đoạn đó sẽ chuyển sang màu đỏ, ta làm như sau:
 
 ```js
 d3.selectAll("p").on("click", function() {
@@ -99,13 +103,13 @@ d3.selectAll("p").on("click", function() {
 
 <a name="selectAll" href="#selectAll">#</a> d3.<b>selectAll</b>(<i>selector</i>) [<>](https://github.com/d3/d3-selection/blob/master/src/selectAll.js#L3 "Source")
 
-Selects all elements that match the specified *selector* string. The elements will be selected in document order (top-to-bottom). If no elements in the document match the *selector*, or if the *selector* is null or undefined, returns an empty selection. For example, to select all paragraphs:
+Method này sẽ giúp select toàn bộ các phần tử miễn là thỏa mãn điều kiện đầu vào (*selector*). Quá trình truy vấn sẽ diễn ra theo chiều từ trên xuống dưới của document. Kết quả trả về sẽ là *rỗng* nếu không có phần tử nào thỏa mãn, hoặc *selector* bằng null hoặc undefined. Ví dụ để select toàn bộ phần tử có thẻ `<p>` (tức là paragraph) trong document:
 
 ```js
 var paragraph = d3.selectAll("p");
 ```
 
-If the *selector* is not a string, instead selects the specified array of nodes; this is useful if you already have a reference to nodes, such as `this.childNodes` within an event listener or a global such as `document.links`. The nodes may instead be a pseudo-array such as a `NodeList` or `arguments`. For example, to color all links red:
+Bên cạnh việc truyền điều kiện đầu vào dưới dạng chỗi, người dùng có thể truyền vào tham chiếu đến nodes, như là `this.childNodes` bên trong một event listener, hoặc biến global như`document.links`. Những nodes này sẽ hoạt động giống như một pseudo-array như `NodeList` hoặc `arguments`. Ví dụ, để tô màu đỏ toàn bộ các liên kết:
 
 ```js
 d3.selectAll(document.links).style("color", "red");
@@ -113,13 +117,15 @@ d3.selectAll(document.links).style("color", "red");
 
 <a name="selection_select" href="#selection_select">#</a> <i>selection</i>.<b>select</b>(<i>selector</i>) [<>](https://github.com/d3/d3-selection/blob/master/src/selection/select.js "Source")
 
-For each selected element, selects the first descendant element that matches the specified *selector* string. If no element matches the specified selector for the current element, the element at the current index will be null in the returned selection. (If the *selector* is null, every element in the returned selection will be null, resulting in an empty selection.) If the current element has associated data, this data is propagated to the corresponding selected element. If multiple elements match the selector, only the first matching element in document order is selected. For example, to select the first bold element in every paragraph:
+*selection* kia có thể viết tắt là A, tức là A.select(selector), và A là kết quả của 1 select trước đó. Bằng cách này, người ta có thể tiến hành *select* "liên hoàn", hoặc giới hạn việc select chỉ nội bộ trong A. Ví dụ, nếu A là tập toàn bộ các paragraph trong document, giờ muốn select chỉ những phần tử in đậm (đặt trong thẻ `<b>`), ta sẽ làm như sau:
 
 ```js
 var b = d3.selectAll("p").select("b");
 ```
 
-If the *selector* is a function, it is evaluated for each selected element, in order, being passed the current datum (*d*), the current index (*i*), and the current group (*nodes*), with *this* as the current DOM element (*nodes*[*i*]). It must return an element, or null if there is no matching element. For example, to select the previous sibling of each paragraph:
+A ở đây chính là `d3.selecAll("p")`.
+
+Nếu *selector* là một function, thì với mỗi phần tử được select, tham số truyền vào cho function kia sẽ là dữ liệu (current datum) (viết tắt là *d*), index (*i*), và group chứa phẩn từ (*nodes*), cùng với *this* là phần tử trực tiếp đang được select (*nodes*[*i*]). Kết quả trả về có thể là một phần tử, hoặc null nếu không tìm thấy phần tử nào thỏa mãn. Ví dụ, để select sibling liền trước của mỗi paragraph:
 
 ```js
 var previous = d3.selectAll("p").select(function() {
@@ -127,7 +133,7 @@ var previous = d3.selectAll("p").select(function() {
 });
 ```
 
-Unlike [*selection*.selectAll](#selection_selectAll), *selection*.select does not affect grouping: it preserves the existing group structure and indexes, and propagates data (if any) to selected children. Grouping plays an important role in the [data join](#joining-data). See [Nested Selections](http://bost.ocks.org/mike/nest/) and [How Selections Work](http://bost.ocks.org/mike/selection/) for more on this topic.
+Không giống như [*selection*.selectAll](#selection_selectAll), *selection*.select không ảnh hưởng đến grouping: nó vẫn giữ nguyên cấu trúc lẫn thứ tự bên trong của group hiện thờ, và chỉ truyền dữ liệu (nếu có) đến phần tử con trong group được select mà thôi. Grouping có một vai trò quan trọng trong kỹ thuật [data join](#joining-data). Xem thêm về [Nested Selections](http://bost.ocks.org/mike/nest/) và [How Selections Work](http://bost.ocks.org/mike/selection/) for more on this topic.
 
 <a name="selection_selectAll" href="#selection_selectAll">#</a> <i>selection</i>.<b>selectAll</b>(<i>selector</i>) [<>](https://github.com/d3/d3-selection/blob/master/src/selection/selectAll.js "Source")
 
