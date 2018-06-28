@@ -133,7 +133,7 @@ var previous = d3.selectAll("p").select(function() {
 });
 ```
 
-Không giống như [*selection*.selectAll](#selection_selectAll), *selection*.select không ảnh hưởng đến grouping: nó vẫn giữ nguyên cấu trúc lẫn thứ tự bên trong của group hiện thờ, và chỉ truyền dữ liệu (nếu có) đến phần tử con trong group được select mà thôi. Grouping có một vai trò quan trọng trong kỹ thuật [data join](#joining-data). Xem thêm về [Nested Selections](http://bost.ocks.org/mike/nest/) và [How Selections Work](http://bost.ocks.org/mike/selection/) for more on this topic.
+Không giống như [*selection*.selectAll](#selection_selectAll), *selection*.select không ảnh hưởng đến grouping: nó vẫn giữ nguyên cấu trúc lẫn thứ tự bên trong của group hiện thờ, và chỉ truyền dữ liệu (nếu có) đến phần tử con trong group được select mà thôi. Grouping có một vai trò quan trọng trong kỹ thuật [data join](#joining-data). Xem thêm về [Nested Selections](http://bost.ocks.org/mike/nest/) và [How Selections Work](http://bost.ocks.org/mike/selection/) để có thêm thông tin.
 
 <a name="selection_selectAll" href="#selection_selectAll">#</a> <i>selection</i>.<b>selectAll</b>(<i>selector</i>) [<>](https://github.com/d3/d3-selection/blob/master/src/selection/selectAll.js "Source")
 
